@@ -23,9 +23,40 @@ model Profile {
 model User {
   id        String    @id @default(cuid())
   name      String    @db.VarChar(100)
+  email     String    @db.VarChar(100)
+  password  String    @db.VarChar(20)
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
   profiles  Profile[]
 
   @@map("users")
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  description String?
+  likes       Int?
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  Comment     Comment[]
+  Image       Image[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id          String  @id @default(cuid())
+  description String?
+  post        Post    @relation(fields: [postId], references: [id])
+  postId      String
+
+  @@map("comments")
+}
+
+model Image {
+  id     String @id @default(cuid())
+  name   String @unique
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+
+  @@map("images")
 }
