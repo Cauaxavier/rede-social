@@ -24,7 +24,7 @@ model User {
   id        String    @id @default(cuid())
   name      String    @db.VarChar(100)
   email     String    @db.VarChar(100)
-  password  String    @db.VarChar(20)
+  password  String    @db.VarChar(255)
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
   profiles  Profile[]
