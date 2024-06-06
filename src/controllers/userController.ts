@@ -3,7 +3,7 @@ import { StatusCodes as HttpStatus } from 'http-status-codes'
 import { hash, compare } from 'bcrypt'
 import { z } from 'zod'
 import { prismaClient } from "../config/prismaClient"
-import { UserSchema, loginSchema } from  '../schemas/userSchema'
+import { UserSchema, LoginSchema } from  '../schemas/userSchema'
 import { createToken } from '../config/authAdminToken'
 
 export default {
@@ -34,11 +34,10 @@ export default {
 
             const { password: _, ...dataUser } = user
 
-            return res.status(HttpStatus.CREATED).json(dataUser)
+            return res.status(HttpStatus.CREATED).json({user: dataUser})
 
         } catch (error) {     
             if (error instanceof z.ZodError) {
-                // Capturando e retornando os erros de validação do Zod
                 const errors = error.errors.map(err => ({
                   field: err.path.join('.'),
                   message: err.message,
@@ -52,7 +51,7 @@ export default {
     async login(req: Request, res: Response) {
         
         try {
-            const {email, password} = loginSchema.parse(req.body)
+            const {email, password} = LoginSchema.parse(req.body)
             
             const user = await prismaClient.user.findFirst({
                 where: {
@@ -78,7 +77,6 @@ export default {
             
         } catch (error) {
             if (error instanceof z.ZodError) {
-                // Capturando e retornando os erros de validação do Zod
                 const errors = error.errors.map(err => ({
                   field: err.path.join('.'),
                   message: err.message,

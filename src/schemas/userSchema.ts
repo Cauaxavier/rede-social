@@ -8,9 +8,9 @@ const UserSchema = z.object({
     isActive: z.boolean().optional()
 })
 
-const loginSchema = z.object({
+const LoginSchema = z.object({
     email: z.string().email({ message: "Invalid email address" }), 
     password: z.string({ message: "Invalid email address" }),
 })
 
-export { UserSchema, loginSchema }
+export { UserSchema, LoginSchema }
