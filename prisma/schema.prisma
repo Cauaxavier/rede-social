@@ -9,7 +9,7 @@ datasource db {
 
 model Profile {
   id          String   @id @default(cuid())
-  userName    String   @db.VarChar(20)
+  userName    String   @unique @db.VarChar(20)
   photo       String?
   description String?
   isVerified  Boolean  @default(false)
@@ -40,8 +40,8 @@ model Post {
   createdAt   DateTime  @default(now()) @db.Timestamptz(3)
   profile     Profile   @relation(fields: [profileId], references: [id])
   profileId   String
-  Comment     Comment[]
-  Image       Image[]
+  comments    Comment[]
+  images      Image[]
 
   @@map("posts")
 }
