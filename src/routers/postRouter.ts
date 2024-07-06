@@ -4,6 +4,6 @@ import multer from '../utils/multer'
 
 const postRouter = Router()
 
-postRouter.post('/post/create/:profileId', multer.array('images'), postController.create)
+postRouter.post('/post/create/:profileId', multer.array('images', 10), postController.create)
 
 export default postRouter

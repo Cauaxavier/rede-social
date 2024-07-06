@@ -62,7 +62,7 @@ export default {
             if (!user) {
                 return res.status(HttpStatus.UNAUTHORIZED).json({ message: "Incorrect email or password." })
             }    
-    
+            
             const isCorrectPassord = await compare(password, user.password)
     
             if (!isCorrectPassord) {
@@ -75,6 +75,38 @@ export default {
     
             return res.status(HttpStatus.ACCEPTED).json({ user: dataUser,token })
             
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const errors = error.errors.map(err => ({
+                  field: err.path.join('.'),
+                  message: err.message,
+                }));
+                return res.status(HttpStatus.BAD_REQUEST).json({ errors });
+            }  
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error in server" })
+        }
+    },
+
+    async getUser(req:Request, res:Response) {
+
+        const userId = req.userId
+
+        try {
+
+            console.log(userId);
+            
+            const user = await prismaClient.user.findFirst({
+                where: {
+                    id: userId
+                },
+
+                include: {
+                    profiles: true
+                }
+            })
+
+            return res.status(HttpStatus.OK).json({ user })
+
         } catch (error) {
             if (error instanceof z.ZodError) {
                 const errors = error.errors.map(err => ({
