@@ -117,5 +117,38 @@ export default {
             }  
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error in server" })
         }
-    }
+    }, 
+
+    async inactivateUser(req: Request, res: Response) {
+        const userId =  req.userId
+
+        try {
+
+            await prismaClient.user.update({
+                data: {
+                    isActive: false
+                },
+
+                where: {
+                    id: userId
+                }
+            })
+
+            return res.status(HttpStatus.NO_CONTENT).json()
+            
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const errors = error.errors.map(err => ({
+                  field: err.path.join('.'),
+                  message: err.message,
+                }));
+                return res.status(HttpStatus.BAD_REQUEST).json({ errors });
+            }  
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error in server" })
+        }
+   
+    },
+
+    
+
 }

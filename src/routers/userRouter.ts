@@ -10,5 +10,6 @@ userRouter.post('/user/login', userController.login)
 userRouter.use(authMiddleware)
 
 userRouter.post('/user/me', userController.getUser)
+userRouter.post('/user/inactivate', userController.inactivateUser)
 
 export default userRouter

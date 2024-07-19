@@ -7,4 +7,10 @@ const PostSchema = z.object({
     profileId: z.string().optional()
 })
 
-export { PostSchema }
+const CommentSchema = z.object({
+    id: z.string().optional(),
+    description: z.string(),
+    postId: z.string().optional()
+})
+
+export { PostSchema, CommentSchema }
