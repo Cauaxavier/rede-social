@@ -24,7 +24,7 @@ model Profile {
 model User {
   id        String    @id @default(cuid())
   name      String    @db.VarChar(100)
-  email     String    @db.VarChar(100) @unique 
+  email     String    @unique @db.VarChar(100)
   password  String    @db.VarChar(255)
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
@@ -36,7 +36,7 @@ model User {
 model Post {
   id          String    @id @default(cuid())
   description String?
-  likes       Int?
+  likes       Int?      @default(0)
   createdAt   DateTime  @default(now()) @db.Timestamptz(3)
   profile     Profile   @relation(fields: [profileId], references: [id])
   profileId   String

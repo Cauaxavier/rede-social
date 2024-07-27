@@ -3,6 +3,7 @@ import { PostSchema, CommentSchema } from '../schemas/postSchema'
 import { prismaClient } from '../config/prismaClient'
 import { StatusCodes as HttpStatus } from 'http-status-codes'
 import { z } from 'zod'
+import fs from 'fs/promises'
 
 export default {
     async create(req: Request, res: Response) {
@@ -115,6 +116,89 @@ export default {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error in server" })
         }
 
-    }
+    },
 
+    async delete(req: Request, res: Response) {
+        const { postId } = req.params
+
+        try {
+
+            const images = await prismaClient.image.findMany({
+                where: {
+                    postId
+                },
+
+                select: {
+                    name: true
+                }
+            })
+
+            for (const image of images) {
+                await fs.unlink(`images/${image.name}`)
+            }
+            
+            await prismaClient.image.deleteMany({
+                where: {
+                    postId: postId
+                },
+            })
+            
+            await prismaClient.comment.deleteMany({
+                where: {
+                    postId: postId
+                }
+            })
+            
+            await prismaClient.post.delete({
+                where: {
+                    id: postId
+                },
+            })
+
+            return res.status(HttpStatus.NO_CONTENT).json()
+
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const errors = error.errors.map(err => ({
+                  field: err.path.join('.'),
+                  message: err.message,
+                }));
+                return res.status(HttpStatus.BAD_REQUEST).json({ errors });
+            }       
+
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error in server" })
+        }
+    },
+
+    async like(req: Request, res: Response) {
+        const { postId } = req.params
+
+        try {
+            await prismaClient.post.update({
+
+                data: {
+                    likes: {
+                        increment: 1
+                    }
+                },
+
+                where: {
+                    id: postId
+                }
+            })
+
+            return res.status(HttpStatus.OK).json()
+
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const errors = error.errors.map(err => ({
+                  field: err.path.join('.'),
+                  message: err.message,
+                }));
+                return res.status(HttpStatus.BAD_REQUEST).json({ errors });
+            }       
+
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Error in server" })
+        }
+    }
 }
