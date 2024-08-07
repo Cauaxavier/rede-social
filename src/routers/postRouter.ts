@@ -8,6 +8,6 @@ postRouter.post('/post/create/:profileId', multer.array('images', 10), postContr
 postRouter.get('/post/:profileId', postController.getPost)
 postRouter.post('/post/comment/:postId', postController.comment)
 postRouter.patch('/post/like/:postId', postController.like)
-postRouter.delete('/post/delete/:postId', postController.delete)
+postRouter.delete('/post/delete/:postId', postController.exclusion)
 
 export default postRouter
